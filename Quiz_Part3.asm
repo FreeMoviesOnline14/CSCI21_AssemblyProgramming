@@ -78,9 +78,18 @@ newtsMethod:
     bc1f newtsMethod       # branch back to newtsMethod loop, else exit
     mov.s   $f1, $f12       # oldX = newX, for next approximation
     
-# exit
+# display final approximation and terminate program
 exit:
     li      $v0, 4
+	la		$a0, lineF
+	syscall
+	la		$a0, FinalApprox
+	syscall
+	li		$v0, 2
+	syscall
+	li		$v0, 4
+	la		$a0, lineF
+	syscall
     la      $a0, exitMsg
     syscall
     li      $v0, 10
@@ -88,3 +97,5 @@ exit:
 
 # end of program
 # end of file
+
+
