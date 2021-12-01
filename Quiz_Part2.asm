@@ -12,7 +12,7 @@
 #
 # Copyright(c)
 #
-# Last date modified: 11/29/2021
+# Last date modified: 11/30/2021
 #
 # 
 
@@ -38,56 +38,56 @@ exitMsg:.asciiz "\n\nExiting program..."
 main:
 
 # get value for x
-        li      $v0, 4			# service code for printing string
+        li      $v0, 4		# service code for printing string
         la      $a0, xVal       # prompt user for value of x
         syscall     
-		li 		$v0, 6			# service code for reading floating value
-		syscall
-		mov.s	$f1, $f0		# $f1 = x
+	li	$v0, 6		# service code for reading floating value
+	syscall
+	mov.s	$f1, $f0	# $f1 = x
 
 # get value for a	
         li      $v0, 4
         la      $a0, aVal       # prompt user for value of a
         syscall
-		li 		$v0, 6			# service code for reading floating value
-		syscall
-		mov.s	$f2, $f0		# $f2 = a
+	li 	$v0, 6		# service code for reading floating value
+	syscall
+	mov.s	$f2, $f0	# $f2 = a
 
 # get value for b
         li      $v0, 4
         la      $a0, bVal       # prompt user for value of b
         syscall
-		li 		$v0, 6			# service code for reading floating value
-		syscall
-		mov.s	$f3, $f0		# $f3 = b
+	li 	$v0, 6		# service code for reading floating value
+	syscall
+	mov.s	$f3, $f0	# $f3 = b
 
 # get value for c
         li      $v0, 4
         la      $a0, cVal       # prompt user for value of c
         syscall
-		li 		$v0, 6			# service code for reading floating value
-		syscall
-		mov.s	$f4, $f0		# $f4 = c
+	li 	$v0, 6		# service code for reading floating value
+	syscall
+	mov.s	$f4, $f0	# $f4 = c
 
 # evaluate the expression ax^2 + bx + c, which is the same as x(ax + b) + c
-		mul.s	$f2, $f1, $f2	# $f2 = ax
-		add.s	$f2, $f2, $f3	# $f2 = ax + b
-		mul.s	$f1, $f1, $f2	# $f1 = ax^2 + bx
-		add.s	$f12, $f1, $f4	# $f1 = ax^2 + bx + c
+	mul.s	$f2, $f1, $f2	# $f2 = ax
+	add.s	$f2, $f2, $f3	# $f2 = ax + b
+	mul.s	$f1, $f1, $f2	# $f1 = ax^2 + bx
+	add.s	$f12, $f1, $f4	# $f1 = ax^2 + bx + c
 
 # display result of evaluation
-		li 	$v0, 4
-		la  $a0, result
-		syscall
-		li	$v0, 2
-		syscall
+	li 	$v0, 4
+	la  	$a0, result
+	syscall
+	li	$v0, 2
+	syscall
 
 exit:
-		li 	$v0, 4
-		la  $a0, exitMsg
-		syscall
-		li 	$v0, 10
-		syscall
+	li 	$v0, 4
+	la  	$a0, exitMsg
+	syscall
+	li 	$v0, 10
+	syscall
 
 # end of program
 # end of file
