@@ -1,0 +1,54 @@
+/*
+
+Filename: Quiz_InClass.txt
+Date created: 11/30/2021
+
+Author(s): Marcellus Von Sacramento
+
+Last date modified: 11/30/2021
+
+*/
+
+
+Question #1: Conver decimal to binary (15 pts)
+
+Decimal:            Binary:
+5.75                0101.1100
+
+63/64 = 0.984375    0.111111
+
+9.8125              1001.1101
+
+Question #2: Convert the 34.890625 into the IEEE 754 floating-point representation (15 pts)
+
+Decimal:        Binary:                 Explanation:
+34.890625       100010.111001           - convert decimal to binary form
+                1.00010 111001 x 2^5    - move the Decimal
+                00010111001 x 2^5       - drop leading 1
+                00010111001000000000000 - add zeroes to make 23 bits in total
+
+Question #3: The following number is the IEEE 754 floating-point representation. Convert the binary number to the decimal number(15 pts)
+
+
+Step 1: convert binary to decimal exponent
+
+01111011  --> -4
+
+Step 2: Find value of mantissa
+
+all 0 to mantissa is just 0
+
+
+Result: 
+
+1.0 x 2 ^ -4
+
+Question #4: Explain the definition of denormalized number and show the largest denormalized number and the smallest normalized number(for the positive numbers). 15 pts
+
+Answer:
+
+denormalized number gives way for us to represent floating-point value zero. Additionally, it allows us to 
+represent small number that cannot be represent using normalized number.
+
+
+
