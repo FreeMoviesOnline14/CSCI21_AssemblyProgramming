@@ -57,15 +57,15 @@ hundredsPlace:
     li      $s0, 100        # $s0 = 100
     mult    $s1, $s0        # calculate the "hundreds" place by multiplying input by 100
     mflo    $s1             # get result from lo register
-    j       waitloop        # jump back to waitloop to get next input
+    j       waitLoop        # jump back to waitloop to get next input
     add     $s3, $s3, $s1   # add result to $s3
 
 # case 2:
 tensPlace:
     li      $s0, 10         # $s0 = 10
     mult    $s1, $s0        # calculate the "hundreds" place by multiplying input by 100
-    mflo    $s0             # get result from lo register
-    j       waitloop        # jump back to waitloop to get next input
+    mflo    $s1             # get result from lo register
+    j       waitLoop        # jump back to waitloop to get next input
     addu    $s3, $s3, $s1   # add result to $s3
 
 # case 3:
