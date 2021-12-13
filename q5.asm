@@ -13,10 +13,23 @@
 #
 # Last date modified: 12/12/2021
 #
+# service code for printing integer: 1
+# service code for printing string : 4
+# service code for returning control to OS: 10
+
+# Note: There's no need to check if user enterned a letter or any other character  
+#       because the program will trim the lower 4 bits of the 8 bits from receiver data.
+#
+# For example: 'A' == 65 == 0100 0001 ---> after the shift manipulation we get 0001, the lower 4 bits.
+#               Due to this, we will get a decimal of 1 instead of 65. This may be a bad design, but for
+#               demonstration purposes I'll stick with this approach.
 #
 
         .data
+        .align 2
 jTable: .word   hundredsPlace, tensPlace, onesPlace  # jumptable
+msg:    .asciiz "Input is: "                         # message for final input
+exMsg:  .asciiz "\nExiting program...\n"             # exit message
 
         .text
         .globl main
@@ -73,11 +86,17 @@ onesPlace:
     addu    $s3, $s3, $s1   # add last input digit to calculate final result
 
 display:
+    la      $a0, msg        # load address of the message to be displayed
+    li      $v0, 4          # service code for printing string
+    syscall
     or      $a0, $s3, $s3   # copy contents of $s1 to $a0 for display
-    li      $v0, 1          # service code for printing string
+    li      $v0, 1          # service code for printing integer
     syscall
 
 exit:
+    la      $a0, exMsg      # load address of the message to be displayed
+    li      $v0, 4          # service code for printing string
+    syscall
     li      $v0, 10         # service code for returning control to OS
     syscall                 # return control to OS
 
