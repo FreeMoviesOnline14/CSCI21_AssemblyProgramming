@@ -96,7 +96,7 @@ hundredsPlace:
     mult    $s1, $s0        # calculate the "hundreds" place by multiplying input by 100
     mflo    $s1             # get result from lo register
     j       waitLoop        # jump back to waitloop to get next input
-    add     $s3, $s3, $s1   # add result to $s3
+    addu    $s3, $s3, $s1   # add result to $s3
 
 # case 2:
 tensPlace:
