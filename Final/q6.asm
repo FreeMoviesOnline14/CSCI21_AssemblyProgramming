@@ -15,4 +15,19 @@
 #
 #
 
+        .data
+extMsg: .asciiz "Exiting program...\n"
+
+        .text
+        .globl main
+
+main:   # start of text segment
+
+        li      $s0, 0xffff0000     # base address of I/O
+        li      $s1, 2              # 0x000000002 to enable keyboard interrupt
+        sw      $s1, 0($s0)         # store 0x000000002 to $s1 to enable interrupt bit of receiver control
+        li      $s1, 0xffff         # will be used to enable all exception in status register $12
+
+
+
 
