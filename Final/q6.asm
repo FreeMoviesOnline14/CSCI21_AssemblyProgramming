@@ -11,6 +11,11 @@
 # Copyright(c)
 #
 #
+#
+# service code for printing string : 4
+# service code for returning control to OS: 10
+#
+#
 # Last date modified: 12/16/2021
 #
 #
