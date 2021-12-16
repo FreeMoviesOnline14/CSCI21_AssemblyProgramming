@@ -26,8 +26,8 @@
 # Registers used by the program:
 # $s0 = holds extracted the lower 8 bit from receiver data register.
 # $s1 = holds the total or the final output entered by the user.
-# $t1 = holds the counter for determining the digit
-# $t3
+# $t1 = holds the counter for determining the digit.
+# $t3 = holds the address of the jump table for switch case implementation.
 #
 #
 #
