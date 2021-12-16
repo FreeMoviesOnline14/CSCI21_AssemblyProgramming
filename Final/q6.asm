@@ -15,6 +15,14 @@
 # service code for printing string : 4
 # service code for returning control to OS: 10
 #
+# Registers used by the program:
+#
+# $s0 = holds base address of I/O in main.
+# $s1 = holds the value extracted from status register $12 in main.
+# $k0 = holds the ASCII value of 'q' in exception handling phase.
+# $k1 = holds the value extracted from cause register $13. Also, used to manipulate EPC.
+#
+#
 #
 # Last date modified: 12/16/2021
 #
@@ -64,7 +72,7 @@ save2:          .word 0
 entryMsg:       .asciiz "Entered exception handler... Printing pressed key...\n"
 out:            .asciiz "\nYou pressed: "
 ignoreMsg:      .asciiz "Exception level greater than 0... Ignoring exception...\n"
-lf:              .asciiz "\n"
+lf:             .asciiz "\n"
         
 
                 .ktext  0x80000180 # address of kerne text segment
