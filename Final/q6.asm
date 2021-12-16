@@ -48,13 +48,14 @@ save2:  .word 0
 
 entryMsg: .asciiz "Entered exception handler... Printing pressed key...\n"
 out:      .asciiz "You pressed: "
-        
+ignore: .asciiz "Exception level greater than 0... Ignoring exception...\n"
         
         .ktext  0x80000180 
 
 exceptionHandler:       # start of kernel text segment
         sw      $v0, save1      # save $v0 to save1
         sw      $a0, save2      # save $a0 to save2
+        nop
 
 # notify user that we are in exception handling phase
 # for debugging purposes
@@ -68,7 +69,7 @@ exceptionHandler:       # start of kernel text segment
         nop
         srl     $k1, $k1, 2     # shift left logical to extract exception code
         andi    $k1, $k1, 0x1f  # extract exception code
-        bgtz    $k1, done       # we are only interested with interrupts from hardware
+        bgtz    $k1, ignore     # we are only interested with interrupts from hardware
                                 # if exception code is not 0 then we ignore the exception
         li      $a1, 0xffff0000 # load base address of I/O
         lw      $v1, 4($a1)     # extract input from receiver data register, that was placed here from main
@@ -79,18 +80,39 @@ exceptionHandler:       # start of kernel text segment
         li      $v0, 4          # service code for printing string
         syscall
 
-        sw      $v1, 12($a1)     # display pressed key to console
-
-
-
-
-
-qWasPressed:
-
+        sw      $v1, 12($a1)    # display pressed key to console
+        j       done            # exit exception handler
         
+
+# if exception level greater than 0, we ignore exception
+# print message
+ignore:
+        la      $a0, ignore
+        li      $v0, 4
+        syscall
+        j       done
+        nop
+
+
+# exit program when 'q' was pressed
+qWasPressed:
+        lw      $k1, $14        # load address where exception occurred
+        nop
+        addiu   $k1, 4          # add 4 to EPC because we are in branch/jump when returned to main
+        sw      $k1 , $14       # store next address of the instruction to execute when returned to when
 
 
 done:
+# restore original status before exception handling phase
+        lw      $v0, save1      # restore $v0 old value
+        lw      $a0, save2      # restore $a0, old value
+
+
+        mtc0    $zero, $13      # clear cause register $13
+        mfc0    $k1, $12        # extract current value of status register $12
+        andi    $k1, 0xfffd     # reset status register $12 to enable interrupts
+        mtc0    $k1, $12        # store back to status register $12 
+        eret                    # return control back to program
 
 
         
