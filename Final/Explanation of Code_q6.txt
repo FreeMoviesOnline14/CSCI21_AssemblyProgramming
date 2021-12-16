@@ -1,0 +1,49 @@
+Note: This is the code explanation for #2 question in the finals.
+Note: Source code in GitHub. Filename is "q6.asm"
+Note: Screenshots of the sample result of the program will be on GitHub as well.
+	  The screenshots will be placed inside the folder "Finals/q6_testResult_Screenshots/"
+
+
+Code explanation:
+
+Below is the list of questions that was asked in the final exam question #2:
+
+How the interrupt could be enabled?
+- To enable the interrupt, I first load the address of the I/O to $s0. This is to enable the interrupt bit of the receiver
+  control register. Bit 2 is the bit holding the interrupt bit. So, I manipulate it by "andi"ng  it with the decimal 2. 
+  Because in binary, 2  is ---> 0010. With this, I was able to turn on the interrupt for the keyboard. Next, I enabled 
+  the interrupts for the status register $12 by first "li 0xfff1" to $s1. That value will enable all the interrupts for 
+  the status register. After that I performed "mtc0" from $s1 to $12. This effectively enabled all interrupts.
+  
+What happened when the user type a character at the keyboard?
+- When a user type a character interrupt(exception) is thrown and the program flow jump to the kernel to handle the 
+  interrupt. I designed the program to display a prompt when the program jumps to the exception handling phase. Also, 
+  during the exception handling phase the program will first save the registers that need to be saved, in this case $v0 and $a0 
+  will be save to kernel data segment.
+
+How your program notice the interrupt occurs?
+- The program will notice interrupts because interrupt bits of the I/O and status register $12 are enabled. 
+  When key is pressed interrupt(exception) will be thrown. The program flow then jumps to exception handler to process the interrupt.
+ 
+How do we figure out the exception type?
+- The exception handler will extract the exception code from cause register $13. First, the program will extract the value 
+  in $13, and places that to $k1. Then, it shifts the bits in $k1 by 2 to the right to drop off the two lower bits we do not need. 
+  Then, the program performs an "andi 0x1fff" to check whether the exception code is equal to 0, which is the code we are interested in.
+  Any other exception code will be ignored by branching to label "done", where it will restore the original state of the program before 
+  the exception occured.
+  
+Before we return to the user program, what should the kernel program do?
+- Before returning to the user program, we need to restore the original state of the program (i.e. the registers that we saved on the 
+  early steps of the exception handling phase). Also, depending on the logic we might also want to return to the next instruction after 
+  the instruction that caused the exception. In this case, the program will perform "lw" to restore $v0 and $a0. Additionally, if 'q' is 
+  pressed we modify the EPC register $14, so that when we return to the user program we skip the "j" instruction where the exception occured. 
+  Thus, ending the program.
+ 
+
+Registers used by the program:
+
+$s0 = holds base address of I/O in main.
+$s1 = holds the value extracted from status register $12 in main.
+$k0 = holds the ASCII value of 'q' in exception handling phase.
+$k1 = holds the value extracted from cause register $13. Also, used to manipulate EPC.
+
