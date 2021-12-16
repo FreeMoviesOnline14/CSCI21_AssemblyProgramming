@@ -23,7 +23,7 @@
 #               demonstration purposes I'll stick with this approach.
 #
 #
-#   Below is the list of questions that was asked in the final exam:
+#   Below is the list of questions that was asked in the final exam question #1:
 #
 #   What kind of register should we use for MMIO?
 #       - Because the exam only asked for input, the registers we need to use for MMIO are the
@@ -41,8 +41,8 @@
 #       - For this program, I used register $s1 to hold the 8 bits from "Receiver data" register. Then, I manipulate 
 #         it to extract only the lower 4 bits of the 8 bits, so that even if the user entered any character
 #         it will corresspond to numbers 1-9, depending on its lower 4 bits. Again, this may be a bad design, but
-#         For demonstration purposes, I'll stick with approach. A loop can be used to check if non-numeric character 
-#         was pressed by the user. 
+#         For demonstration purposes, I'll stick with this approach. A loop can be used to check if non-numeric character 
+#         was pressed by the user. I used register $s3 to hold the sum of the manipulated $s1 for final output.
 #
 #
 # Last date modified: 12/12/2021
