@@ -11,10 +11,6 @@
 # Copyright(c)
 #
 #
-# service code for printing integer: 1
-# service code for printing string : 4
-# service code for returning control to OS: 10
-#
 # Note: There's no need to check if user enterned a letter or any other character  
 #       because the program will trim the lower 4 bits of the 8 bits from receiver data.
 #
@@ -23,32 +19,21 @@
 #               demonstration purposes I'll stick with this approach.
 #
 #
-#   Below is the list of questions that was asked in the final exam question #1:
+# service code for printing integer: 1
+# service code for printing string : 4
+# service code for returning control to OS: 10
 #
-#   What kind of register should we use for MMIO?
-#       - Because the exam only asked for input, the registers we need to use for MMIO are the
-#         "Receiver control" register and "Receiver data" register. For output, however, we need to use 
-#         "Transmitter control" register and "Transmitter data" register.
-#
-#   What part of the registers did you use and why? What value did you set or get from the register?
-#       - I'm assuming this question is asking about the parts of the "Receiver control" and "Receiver data" registers that was used.
-#         If so, then for "Receiver control" register I used the ready bit located at 0 bit to signal if a key was pressed
-#         by the user. Now, for "Receiver data" register I used the first lower 8 bits which contains the ASCII binary value
-#         of the pressed key. And I used syscall to display the final output instead of using "Transmitter" registers for displaying
-#         the result.
-#
-#   Show your abstractional expression to calculate the decimal value from the inputs.
-#       - For this program, I used register $s1 to hold the 8 bits from "Receiver data" register. Then, I manipulate 
-#         it to extract only the lower 4 bits of the 8 bits, so that even if the user entered any character
-#         it will corresspond to numbers 1-9, depending on its lower 4 bits. Again, this may be a bad design, but
-#         For demonstration purposes, I'll stick with this approach. A loop can be used to check if non-numeric character 
-#         was pressed by the user. I used register $s3 to hold the sum of the manipulated $s1 for final output.
+# Registers used by the program:
+# $s0 = holds extracted the lower 8 bit from receiver data register.
+# $s1 = holds the total or the final output entered by the user.
+# $t1 = holds the counter for determining the digit
+# $t3
 #
 #
-# Last date modified: 12/12/2021
+#
+# Last date modified: 12/16/2021
 #
 #
-
 
         .data
         .align 2
