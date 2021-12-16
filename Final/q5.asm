@@ -38,17 +38,28 @@
         .data
         .align 2
 jTable: .word   hundredsPlace, tensPlace, onesPlace  # jumptable
-msg:    .asciiz "Input is: "                         # message for final input
+header: .asciiz "This program will prompt user to enter three digits, and then displays it in the order it was entered (i.e. 1..2..3 ---> 123)...\n\n"
+msg:    .asciiz "\n\nInput is: "                         # message for final input
 exMsg:  .asciiz "\nExiting program...\n"             # exit message
+prompt: .asciiz "\nPress 1 to 9 key only..."          # prompt for user
 
         .text
         .globl main
 
 main:                       # start of text segment
+    la      $a0, header     # load address of the header of the program to be displayed
+    li      $v0, 4          # service code for printing string
+    syscall
     li      $s3, 0          # holds the final decimal input
     li      $t1, 0          # counter for the digit place
     la      $t3, jTable     # load address of the jumptable
     lui     $t0, 0xffff     # 0xFFFF0000, base address of I/O
+
+promptUser:
+    la      $a0, prompt     # load address of prompt to be displayed
+    li      $v0, 4          # service code for printing string
+    syscall     
+
 
 waitLoop:
     lw      $s0, 0($t0)     # load contents of receiver control register to $t1
@@ -80,7 +91,7 @@ hundredsPlace:
     li      $s0, 100        # $s0 = 100
     mult    $s1, $s0        # calculate the "hundreds" place by multiplying input by 100
     mflo    $s1             # get result from lo register
-    j       waitLoop        # jump back to waitloop to get next input
+    j       promptUser      # jump back to waitloop to get next input
     addu    $s3, $s3, $s1   # add result to $s3
 
 # case 2:
@@ -88,7 +99,7 @@ tensPlace:
     li      $s0, 10         # $s0 = 10
     mult    $s1, $s0        # calculate the "hundreds" place by multiplying input by 100
     mflo    $s1             # get result from lo register
-    j       waitLoop        # jump back to waitloop to get next input
+    j       promptUser      # jump back to waitloop to get next input
     addu    $s3, $s3, $s1   # add result to $s3
 
 # case 3:
