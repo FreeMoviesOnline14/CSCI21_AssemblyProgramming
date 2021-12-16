@@ -39,9 +39,9 @@
         .align 2
 jTable: .word   hundredsPlace, tensPlace, onesPlace  # jumptable
 header: .asciiz "This program will prompt user to enter three digits, and then displays it in the order it was entered (i.e. 1..2..3 ---> 123)...\n\n"
-msg:    .asciiz "\n\nInput is: "                         # message for final input
+msg:    .asciiz "\n\nInput is: "                     # message for final input
 exMsg:  .asciiz "\nExiting program...\n"             # exit message
-prompt: .asciiz "\nPress 1 to 9 key only..."          # prompt for user
+prompt: .asciiz "\nPress 0 to 9 key only..."         # prompt for user
 
         .text
         .globl main
