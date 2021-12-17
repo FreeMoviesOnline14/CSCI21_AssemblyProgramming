@@ -19,7 +19,7 @@
 #
 # $s0 = holds base address of I/O in main.
 # $s1 = holds the value extracted from status register $12 in main.
-# $k0 = holds the ASCII value of 'q' in exception handling phase.
+# $t0 = holds the ASCII value of 'q' in exception handling phase.
 # $k1 = holds the value extracted from cause register $13. Also, used to manipulate EPC.
 #
 #
