@@ -29,17 +29,16 @@
 #
 
                 .data
-initMsg:        .asciiz "Pressed any key... Press 'q' to Exit...\n\n"
+initMsg:        .asciiz "Press any key... Press 'q' to Exit...\n\n"
 extMsg:         .asciiz "\nExiting program...\n"
+out:            .asciiz "\nYou pressed: "
+twoLF:          .asciiz "\n\n"
 
                 .text
                 .globl main
 
 main:   # start of text segment
-
-        la      $a0, initMsg        # load address of initial message to be printed
-        li      $v0, 4              # service code for printing string
-        syscall 
+        li      $t0, 113            # ASCII value of 'q'
 
 # enable all interrupts for status register $12 and receiver control register
         li      $s0, 0xffff0000     # base address of I/O
@@ -48,11 +47,32 @@ main:   # start of text segment
         li      $s1, 0xfff1         # will be used to enable all exception in status register $12
         mtc0    $s1, $12
 
+echoPrompt:
+        la      $a0, initMsg        # load address of initial message to be printed
+        li      $v0, 4              # service code for printing string
+        syscall 
+
 stayHere:
-        j       stayHere                # stay here until q is pressed, kernel will handle that
+        j       stayHere             # stay here until q is pressed, kernel will handle that
+        nop                          # delay
+
+# display pressed key and check if 'q' was pressed
+echoCheckKey:         
+        lw      $s2, 4($s0)          # extract lower input from receiver data register
+        la      $a0, out             # load address of output message
+        li      $v0, 4               # service code for printing string
+        syscall
+        sw      $s2, 12($s0)         # echo pressed key to console
+        beq     $t0, $s2, exit       # if 'q' was pressed then we terminate the program
+        la      $a0, twoLF           # load address of new line, act as delay
+        li      $v0, 4               # service code to print string
+        syscall
+        j       echoPrompt           # else, get next input
+        nop                          # delay
+
 
 exit:
-        la      $a0, extMsg     # load address of exit message
+        la      $a0, extMsg          # load address of exit message, act as delay
         li      $v0, 4          # service code for printing text
         syscall
         li      $v0, 10         # service code for returning control to OS
@@ -70,10 +90,8 @@ exit:
 save1:          .word 0
 save2:          .word 0
 entryMsg:       .asciiz "Entered exception handler... Printing pressed key...\n"
-out:            .asciiz "\nYou pressed: "
 ignoreMsg:      .asciiz "Exception level greater than 0... Ignoring exception...\n"
-lf:             .asciiz "\n"
-        
+       
 
                 .ktext  0x80000180 # address of kerne text segment
 
@@ -89,44 +107,27 @@ exceptionHandler:       # start of kernel text segment
         syscall
 
 # extract exception code from cause register $13
-        li      $k0, 113        # ASCII value of 'q'
         mfc0    $k1, $13        # load current value of $13 to $k1
         nop
         srl     $k1, $k1, 2     # shift left logical to extract exception code
         andi    $k1, $k1, 0x1f  # extract exception code
         bgtz    $k1, ignore     # we are only interested with interrupts from hardware
                                 # if exception code is not 0 then we ignore the exception
-        li      $a1, 0xffff0000 # load base address of I/O
-        lw      $v1, 4($a1)     # extract input from receiver data register, that was placed here from main
-        la      $a0, out        # load address of output message
-        li      $v0, 4          # service code for printing string
-        syscall
-
-        sw      $v1, 12($a1)    # display pressed key to console
-        la      $a0, lf         # load address of new line to be printed
-        li      $v0, 4          # service code for printing string
-        syscall
-
-# check if 'q' was pressed
-        beq     $k0, $v1, qWasPressed   # if 'q' was pressed then we terminate the program
-        nop
-
-        j       done            # exit exception handler
+        nop                     # delay
+        mfc0    $k1, $14        # load address where exception occurred
+        addiu   $k1, 4          # add 4 to EPC because we are in branch/jump when returned to main
+        mtc0    $k1, $14        # store next address of the instruction to execute when returned to when
+        j       done            # jump to exit code segment of the handler
+        nop                     # delay
         
 # if exception level greater than 0, we ignore exception
 # print message
 ignore:
-        la      $a0, ignore
-        li      $v0, 4
+        la      $a0, ignore     # load address of ignore message
+        li      $v0, 4          # service code for printing string
         syscall
-        j       done
+        j       done            # jump to exit code segment of the handler
         nop
-
-# exit program when 'q' was pressed
-qWasPressed:
-        mfc0    $k1, $14        # load address where exception occurred
-        addiu   $k1, 4          # add 4 to EPC because we are in branch/jump when returned to main
-        mtc0    $k1, $14        # store next address of the instruction to execute when returned to when
 
 done:
 # restore original status before exception handling phase
